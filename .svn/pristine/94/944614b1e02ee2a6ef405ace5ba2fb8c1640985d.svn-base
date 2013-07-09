@@ -1,0 +1,589 @@
+﻿using System;
+using System.Data;
+using System.Data.Odbc;
+using System.Data.Common;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Data.OleDb;
+
+
+namespace Table_Project.Data
+{
+    public class DataLink
+    {
+        private OdbcConnection cn;
+        private OleDbConnection cns;
+        public string col_1 { get; set; }
+        public string col_2 { get; set; }
+        public string col_3 { get; set; }
+        public string col_4 { get; set; }
+        public string col_5 { get; set; }
+        public string col_6 { get; set; }
+        public string col_7 { get; set; }
+        public string col_8 { get; set; }
+        public string col_9 { get; set; }
+        public string col_10 { get; set; }
+        public string col_11 { get; set; }
+        public string starttime1 { get; set; }
+        public string lasttime1 { get; set; }
+        public string averagecut1 { get; set; }
+        public string starttime2 { get; set; }
+        public string lasttime2 { get; set; }
+        public string averagecut2 { get; set; }
+        public void testingonly()
+
+        {
+       
+           DataSet ds = null;
+           DataSet ds2 = null;
+           DataTable table = null;
+           DataSet dsa = null;
+           DataTable tablea = null;
+
+           try
+           {
+
+               cn = new OdbcConnection("dsn=View;UID=informix;PWD=WIBBLE;");
+               cn.Open();
+               int hours1 = DateTime.Now.Hour + 1;
+               int minutes = DateTime.Now.Minute;// +1;
+               int hours = DateTime.Now.Hour;
+               string nowme = hours.ToString() + ":00:00";
+               string nowme1 = hours1.ToString() + ":00:00";
+               DateTime dt = (DateTime)Convert.ChangeType(nowme, typeof(DateTime));
+               DateTime dt1 = (DateTime)Convert.ChangeType(nowme1, typeof(DateTime));
+               string sam = DateTime.Today.ToString("dd/MM/yyyy");
+              // sam = "03/08/2012";
+
+               String selectStra = "select * from hel_monitor where he_date = '" + sam + "' and ((he_string Like 'A%') OR (he_string Like 'E%')) order by he_time";
+               OdbcDataAdapter daa = new OdbcDataAdapter(selectStra, cn);
+               dsa = new DataSet();
+               daa.Fill(dsa, "hel_monitora");
+               //int countme = ds.Tables[0].Rows.Count;
+               //col_9 = countme.ToString();
+               tablea = dsa.Tables["hel_monitora"];
+               // Presuming the DataTable has a column named Date.
+               //int hours = DateTime.Now.Hour;
+               string expressiona;
+               expressiona = "he_tableid = 'Y'";
+               DataRow[] foundRowsa;
+
+               // Use the Select method to find all rows matching the filter.
+               foundRowsa = tablea.Select(expressiona);
+               int perhoura = foundRowsa.Length;
+               if (perhoura > 0)
+               {
+
+                   //col_1 = perhour.ToString();
+                   string first_cut = foundRowsa[0].ItemArray[1].ToString();
+                   string last_cut = foundRowsa[foundRowsa.Length - 1].ItemArray[1].ToString();
+                   DateTime first_cut_1 = (DateTime)Convert.ChangeType(first_cut, typeof(DateTime));
+                   DateTime last_cut_1 = (DateTime)Convert.ChangeType(last_cut, typeof(DateTime));
+
+                   int first_cut_hour = first_cut_1.Hour;
+                   int last_cut_hour = last_cut_1.Hour;
+                   int first_cut_minute = first_cut_1.Minute;
+                   int last_cut_minute = last_cut_1.Minute;
+                   int worked_hour = (last_cut_hour - first_cut_hour);
+                   int worked_minute = (last_cut_minute - first_cut_minute);
+                   int hours_to_minutes = (worked_hour * 60) + worked_minute;
+                   double aver_cut = ((double)perhoura / hours_to_minutes) * 57;
+                   //double aver_cut_round = Math.Round(aver_cut, 0);
+                   int convert_cuts = Convert.ToInt32(aver_cut);
+                   starttime2 = first_cut;
+                   lasttime2 = last_cut;
+                   averagecut2 = convert_cuts.ToString();
+               }
+               string expressionxa;
+               expressionxa = "he_tableid = 'X'";
+               DataRow[] foundRowsxa;
+
+               // Use the Select method to find all rows matching the filter.
+               foundRowsxa = tablea.Select(expressionxa);
+               int perhourxa = foundRowsxa.Length;
+               //col_2 = perhourx.ToString();
+               if (perhourxa > 0)
+               {
+
+                   string first_cutx = foundRowsxa[0].ItemArray[1].ToString();
+                   string last_cutx = foundRowsxa[foundRowsxa.Length - 1].ItemArray[1].ToString();
+                   DateTime first_cut_1x = (DateTime)Convert.ChangeType(first_cutx, typeof(DateTime));
+                   DateTime last_cut_1x = (DateTime)Convert.ChangeType(last_cutx, typeof(DateTime));
+
+                   int first_cut_hourx = first_cut_1x.Hour;
+                   int last_cut_hourx = last_cut_1x.Hour;
+                   int first_cut_minutex = first_cut_1x.Minute;
+                   int last_cut_minutex = last_cut_1x.Minute;
+                   int worked_hourx = (last_cut_hourx - first_cut_hourx);
+                   int worked_minutex = (last_cut_minutex - first_cut_minutex);
+                   int hours_to_minutesx = (worked_hourx * 60) + worked_minutex;
+                   double aver_cutx = ((double)perhourxa / hours_to_minutesx) * 57;
+                   //double aver_cut_round = Math.Round(aver_cut, 0);
+                   int convert_cutsx = Convert.ToInt32(aver_cutx);
+                   starttime1 = first_cutx;
+                   lasttime1 = last_cutx;
+                   averagecut1 = convert_cutsx.ToString();
+               }
+
+               String selectStr = "select * from hel_monitor where he_date = '" + sam + "' and he_string Like 'A%' order by he_time";
+                    OdbcDataAdapter da = new OdbcDataAdapter(selectStr, cn);
+                    ds = new DataSet();
+                    da.Fill(ds, "hel_monitor");
+                    int countme = ds.Tables[0].Rows.Count;
+                    col_9 = countme.ToString();
+                    table = ds.Tables["hel_monitor"];
+                    // Presuming the DataTable has a column named Date.
+                    //int hours = DateTime.Now.Hour;
+                    string expression;
+                    expression = "he_tableid = 'Y'";
+                    DataRow[] foundRows;
+
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows = table.Select(expression);
+                    int perhour = foundRows.Length;
+                    col_1 = perhour.ToString();
+                  
+                    string expressionx;
+                    expressionx = "he_tableid = 'X'";
+                    DataRow[] foundRowsx;
+
+                    // Use the Select method to find all rows matching the filter.
+                    foundRowsx = table.Select(expressionx);
+                    int perhourx = foundRowsx.Length;
+                    col_2 = perhourx.ToString();
+
+
+                  
+               //
+                   
+                    String selectStrx = "select * from hel_monitor where he_time Between '" + dt.TimeOfDay + "' and '" + dt1.TimeOfDay + "' and he_date = '" + sam + "' and he_string Like 'A%'";
+                    OdbcDataAdapter da2 = new OdbcDataAdapter(selectStrx, cn);
+                    ds2 = new DataSet();
+                    da2.Fill(ds2, "hel_monitor");
+
+                    DataTable table2 = ds2.Tables["hel_monitor"];
+                    // Presuming the DataTable has a column named Date.
+                    //int hours = DateTime.Now.Hour;
+                    string expression2;
+                    expression2 = "he_tableid = 'Y'";
+                    DataRow[] foundRows2;
+               
+                    // Use the Select method to find all rows matching the filter.
+                    foundRows2 = table2.Select(expression2);
+                    int perhour2 = foundRows2.Length;
+                    col_3 = perhour2.ToString();
+
+                    string expressionx2;
+                    expressionx2 = "he_tableid = 'X'";
+                    DataRow[] foundRowsx2;
+
+                    // Use the Select method to find all rows matching the filter.
+                    foundRowsx2 = table2.Select(expressionx2);
+                    int perhourx2 = foundRowsx2.Length;
+                    col_4 = perhourx2.ToString();
+                   
+            //DataRow row = da.SelectCommand.CommandText = "select he_date from hel_monitor where he_time Like '10%'";
+ 
+            cn.Close();
+   
+          
+             }
+            catch (Exception e)
+            {
+          
+                cn.Close();
+                String Str = e.Message;
+                col_9 = "Q";
+            }
+
+          
+        }
+
+
+
+
+        public void testingonly2()
+        {
+           
+         
+            DataSet ds = null;
+            DataSet ds2 = null;
+            DataTable table = null;
+            try
+            {
+
+                cn = new OdbcConnection("dsn=View;UID=informix;PWD=WIBBLE;");
+                cn.Open();
+                string sam = DateTime.Today.ToString("dd/MM/yyyy");
+                // sam = "03/08/2012";
+                String selectStr = "select * from hel_monitor where he_date = '" + sam + "' and he_string Like 'E%'";
+                OdbcDataAdapter da = new OdbcDataAdapter(selectStr, cn);
+                ds = new DataSet();
+                da.Fill(ds, "hel_monitor");
+                int countme = ds.Tables[0].Rows.Count;
+                col_10 = countme.ToString();
+                table = ds.Tables["hel_monitor"];
+                // Presuming the DataTable has a column named Date.
+                //int hours = DateTime.Now.Hour;
+                string expression;
+                expression = "he_tableid = 'Y'";
+                DataRow[] foundRows;
+
+                // Use the Select method to find all rows matching the filter.
+                foundRows = table.Select(expression);
+                int perhour = foundRows.Length;
+                col_5 = perhour.ToString();
+                
+                string expressionx;
+                expressionx = "he_tableid = 'X'";
+                DataRow[] foundRowsx;
+
+                // Use the Select method to find all rows matching the filter.
+                foundRowsx = table.Select(expressionx);
+                int perhourx = foundRowsx.Length;
+                col_6 = perhourx.ToString();
+                
+
+                int hours1 = DateTime.Now.Hour; // +1;
+                int hours = DateTime.Now.Hour - 1;
+                string nowme = hours.ToString() + ":00:00";
+                string nowme1 = hours1.ToString() + ":00:00";
+                DateTime dt = (DateTime)Convert.ChangeType(nowme, typeof(DateTime));
+                DateTime dt1 = (DateTime)Convert.ChangeType(nowme1, typeof(DateTime));
+                String selectStrx = "select * from hel_monitor where he_time Between '" + dt.TimeOfDay + "' and '" + dt1.TimeOfDay + "' and he_date = '" + sam + "' and he_string Like 'E%'";
+                OdbcDataAdapter da2 = new OdbcDataAdapter(selectStrx, cn);
+                ds2 = new DataSet();
+                da2.Fill(ds2, "hel_monitor");
+
+                DataTable table2 = ds2.Tables["hel_monitor"];
+                // Presuming the DataTable has a column named Date.
+                //int hours = DateTime.Now.Hour;
+                string expression2;
+                expression2 = "he_tableid = 'Y'";
+                DataRow[] foundRows2;
+
+                // Use the Select method to find all rows matching the filter.
+                foundRows2 = table2.Select(expression2);
+                int perhour2 = foundRows2.Length;
+                col_7 = perhour2.ToString();
+               
+                string expressionx2;
+                expressionx2 = "he_tableid = 'X'";
+                DataRow[] foundRowsx2;
+
+                // Use the Select method to find all rows matching the filter.
+                foundRowsx2 = table2.Select(expressionx2);
+                int perhourx2 = foundRowsx2.Length;
+                col_8 = perhourx2.ToString();
+                
+                //DataRow row = da.SelectCommand.CommandText = "select he_date from hel_monitor where he_time Like '10%'";
+               
+                cn.Close();
+            }
+            catch (Exception e)
+            {
+            
+                cn.Close();
+                String Str = e.Message;
+                col_10 = "Q";
+            }
+
+      
+        }
+
+        public void returns()
+        {
+
+            DataSet ds = null;
+          
+            try
+            {
+
+                cn = new OdbcConnection("dsn=View;UID=informix;PWD=WIBBLE;");
+                cn.Open();
+                string sam = DateTime.Today.ToString("dd/MM/yyyy");
+                // sam = "03/08/2012";
+                String selectStr = "select pa_tranno from pieceaudit where pa_trandate = '" + sam + "' and pa_narrative LIKE 'RETURN CREATED%' and pa_location = 'BIN17'";
+                OdbcDataAdapter da = new OdbcDataAdapter(selectStr, cn);
+                ds = new DataSet();
+                da.Fill(ds, "pieceaudit");
+                int countme = ds.Tables[0].Rows.Count;
+                col_11 = countme.ToString();
+                cn.Close();
+            }
+            catch (Exception e)
+            {
+                cn.Close();
+                String Str = e.Message;
+                col_11 = "QT";
+            }
+
+       
+        }
+
+
+        public DataSet graphing()
+        {
+            DataSet ds = null;
+            DataSet dsE = null;
+            DataSet dsreturn = null;
+            DataTable dtreturn = null;
+            DataTable tableE = null;
+            DataTable table = null;
+            try
+            {
+                dsreturn = new DataSet();
+                dtreturn = new DataTable();
+                DataColumn column;
+                DataRow row;
+                column = dtreturn.Columns.Add();
+                column.ColumnName = "Procedure";
+                column.DataType = typeof(string);
+
+                //column = dtreturn.Columns.Add();
+                //column.ColumnName = "Table2cut";
+                //column.DataType = typeof(string);
+
+                //column = dtreturn.Columns.Add();
+                //column.ColumnName = "Table1chk";
+                column.DataType = typeof(string);
+
+                column = dtreturn.Columns.Add();
+                column.ColumnName = "Values";
+                column.DataType = typeof(string);
+
+                column = dtreturn.Columns.Add();
+                column.ColumnName = "Dateme";
+                column.DataType = typeof(string);
+
+                cn = new OdbcConnection("dsn=View;UID=informix;PWD=WIBBLE;");
+                cn.Open();
+                string sam = DateTime.Today.ToString("dd/MM/yyyy");
+
+                string sam8 = DateTime.Today.AddDays(-8).ToString("dd/MM/yyyy");
+                String selectStrx = "select he_tableid, he_date from hel_monitor where he_date Between '" + sam8 + "' and '" + sam + "' and he_string Like 'A%'";
+                String selectStrxE = "select he_tableid, he_date from hel_monitor where he_date Between '" + sam8 + "' and '" + sam + "' and he_string Like 'E%'";
+
+                OdbcDataAdapter da = new OdbcDataAdapter(selectStrx, cn);
+
+                ds = new DataSet();
+                da.Fill(ds, "hel_monitor");
+                table = ds.Tables["hel_monitor"];
+                OdbcDataAdapter daE = new OdbcDataAdapter(selectStrxE, cn);
+                dsE = new DataSet();
+                daE.Fill(dsE, "hel_monitorE");
+                tableE = dsE.Tables["hel_monitorE"];
+
+                for (int i = 8; i > -1; i--)
+                {
+
+                    string sam1 = DateTime.Today.AddDays(-i).ToString("dd/MM/yyyy");
+                    string expression = "he_tableid = 'X' and he_date = '" + sam1 + "'";
+                    DataRow[] foundRows;
+                    foundRows = table.Select(expression);
+                    string toatals = foundRows.Length.ToString();
+                    row = dtreturn.NewRow();
+                    row["Dateme"] = sam1;
+                    row["Values"] = toatals;
+                    row["Procedure"] = "Table 1 Cuts";
+                    dtreturn.Rows.Add(row);
+
+                    string expression2 = "he_tableid = 'Y' and he_date = '" + sam1 + "'";
+                    DataRow[] foundRows2;
+                    foundRows2 = table.Select(expression2);
+                    string toatals2 = foundRows2.Length.ToString();
+                    row = dtreturn.NewRow();
+                    row["Dateme"] = sam1;
+                    row["Values"] = toatals2;
+                    row["Procedure"] = "Table 2 Cuts";
+                    dtreturn.Rows.Add(row);
+
+                    string expression3 = "he_tableid = 'X' and he_date = '" + sam1 + "'";
+                    DataRow[] foundRows3;
+                    foundRows3 = tableE.Select(expression3);
+                    string toatals3 = foundRows3.Length.ToString();
+                    row = dtreturn.NewRow();
+                    row["Dateme"] = sam1;
+                    row["Values"] = toatals3;
+                    row["Procedure"] = "Table 1 Checks";
+                    dtreturn.Rows.Add(row);
+
+                    string expression4 = "he_tableid = 'Y' and he_date = '" + sam1 + "'";
+                    DataRow[] foundRows4;
+                    foundRows4 = tableE.Select(expression4);
+                    string toatals4 = foundRows4.Length.ToString();
+                    row = dtreturn.NewRow();
+                    row["Dateme"] = sam1;
+                    row["Values"] = toatals4;
+                    row["Procedure"] = "Table 2 Checks";
+                    dtreturn.Rows.Add(row);
+
+                }
+
+
+
+                dsreturn.Tables.Add(dtreturn);
+                dsreturn.AcceptChanges();
+
+                cn.Close();
+            }
+            catch (Exception e)
+            {
+
+                cn.Close();
+                String Str = e.Message;
+            }
+
+            return dsreturn;
+            
+        }
+        private string cust { get; set; }
+        private string rep { get; set; }
+        private void findcustandadd(string arg1)
+        {
+            cust = "";
+            rep = "";
+            DataSet ds = null;
+            try
+            {
+
+                cn = new OdbcConnection("dsn=View;UID=informix;PWD=WIBBLE;");
+                cn.Open();
+                String selectStr = "select oh_custaccref, oh_repref from orderhead, ordersub where os_orderno = oh_orderno and os_invno = '" + arg1 + "' Group By oh_custaccref, oh_repref";
+                OdbcDataAdapter da = new OdbcDataAdapter(selectStr, cn);
+                ds = new DataSet();
+                da.Fill(ds, "customer");
+                int countme = ds.Tables[0].Rows.Count;
+                DataRow dd = ds.Tables[0].Rows[0];
+                cust = dd[0].ToString();
+                rep = dd[1].ToString();
+                cn.Close();
+            }
+            catch (Exception e)
+            {
+                cn.Close();
+                //cns.Close();
+                String Str = e.Message;
+              
+            }
+            cn.Close();
+
+
+        }
+        public void julie()
+        {
+            DataSet dsreturn = null;
+            DataTable dtreturn = null;
+            dsreturn = new DataSet();
+            dtreturn = new DataTable();
+            DataColumn column;
+            DataRow row1;
+            column = dtreturn.Columns.Add();
+            column.ColumnName = "invoice_info";
+            column.DataType = typeof(string);
+
+            column = dtreturn.Columns.Add();
+            column.ColumnName = "invoice_number";
+            column.DataType = typeof(string);
+
+            column = dtreturn.Columns.Add();
+            column.ColumnName = "total_amount";
+            column.DataType = typeof(string);
+
+            column = dtreturn.Columns.Add();
+            column.ColumnName = "to_pay";
+            column.DataType = typeof(string);
+
+            column = dtreturn.Columns.Add();
+            column.ColumnName = "customer";
+            column.DataType = typeof(string);
+
+            column = dtreturn.Columns.Add();
+            column.ColumnName = "rep";
+            column.DataType = typeof(string);
+
+            try
+            {
+
+                DataSet ds = null;
+
+                cns = new OleDbConnection("provider=Microsoft.Jet.OLEDB.4.0;Data Source='d:\\paid.xls';Extended Properties=Excel 8.0;");
+                cns.Open();
+                String selectStrnew =  "select * from [PAYABLE$]";
+
+                OleDbDataAdapter da = new OleDbDataAdapter(selectStrnew, cns);
+
+                ds = new DataSet();
+                da.Fill(ds, "monitor");
+
+                DataRow row;
+                row = ds.Tables[0].Rows[0];
+               
+                foreach (DataRow drow in ds.Tables[0].Rows)
+                //  for (int i = 0; i < row.Count; i++)
+                {
+                    // DataRow drow = row[i];
+
+                    // Only row that have not been deleted
+                    if (drow.RowState != DataRowState.Deleted)
+                    {
+                        //drow["product_code"].ToString()
+                        try
+                        {
+                           string help1 = drow[0].ToString();
+                           string help2 = Decimal.Round(Convert.ToInt32(drow[1].ToString()), 0).ToString();
+                           string help3 = drow[2].ToString();
+                           string help4 = drow[3].ToString();
+                           string help5 = drow[4].ToString();
+
+                           if (help1 != "")
+                           {
+                               findcustandadd(help2);
+                                
+                                
+                                  row1 = dtreturn.NewRow();
+                                  row1["invoice_info"] = help1;
+                                  row1["invoice_number"] = help2;
+                                  row1["total_amount"] = help3;
+                                  row1["to_pay"] = help4;
+                                  row1["customer"] = cust;
+                                  row1["rep"] = rep;
+                                  dtreturn.Rows.Add(row1);
+
+              
+
+
+                
+                           }
+                               
+                        }
+                        catch (Exception e)
+                        {
+                            String Str = e.Message;
+                            cns.Close();
+                        }
+
+
+                    }
+                }
+
+               
+                dsreturn.Tables.Add(dtreturn);
+                dsreturn.AcceptChanges();
+                ExcelLibrary.DataSetHelper.CreateWorkbook("payments.xls", dsreturn); 
+                cns.Close();
+            }
+
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.ToString());
+
+            }
+
+        }
+
+      
+
+    }
+}
